@@ -25,6 +25,15 @@ class Discography(db.Model):
     def __repr__(self):
         return f'<Discography {self.song_name}>'
 
+class MusicVideos(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    artist = db.Column(db.String(100), nullable=False)
+    video_name = db.Column(db.String(255), nullable=False)
+    youtube_url = db.Column(db.String(255), nullable=False)
+
+    def __repr__(self):
+        return f'<MusicVideo {self.name}>'
+    
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)

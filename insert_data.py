@@ -1,5 +1,5 @@
 import pandas as pd
-from models import db, Product, Discography
+from models import db, Product, Discography, MusicVideos
 from app import app
 
 def insert_data_from_excel():
@@ -38,6 +38,19 @@ def insert_data_from_excel():
                 db.session.add(discography)
             db.session.commit()
             print("Discography added from Excel!")
+
+                    # Read MusicVideos data from the third sheet
+        music_video_df = pd.read_excel(excel_file, sheet_name='MusicVideo')
+        if not MusicVideos.query.first():
+            for _, row in music_video_df.iterrows():
+                video = MusicVideos(
+                    artist=row['artist'],
+                    video_name=row['video_name'],
+                    youtube_url=row['youtube_url']
+                )
+                db.session.add(video)
+            db.session.commit()
+            print("Music Videos added from Excel!")
 
 # Run the function to insert the data
 insert_data_from_excel()
