@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-
+from datetime import datetime
 # Initialize the SQLAlchemy object
 db = SQLAlchemy()
 
@@ -24,3 +24,12 @@ class Discography(db.Model):
 
     def __repr__(self):
         return f'<Discography {self.song_name}>'
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    total_price = db.Column(db.Float, nullable=False)
+    payment_status = db.Column(db.String(50), nullable=False, default='Created')
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
