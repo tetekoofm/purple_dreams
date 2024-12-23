@@ -1,56 +1,124 @@
 import pandas as pd
-from models import db, Product, Discography, MusicVideos
+from models import db, Memory, Milestone, Product, Discography, MusicVideo
 from app import app
 
 def insert_data_from_excel():
     # Load the Excel file
     excel_file = 'purple_dreams.xlsx'
 
-    # Read Product data from the first sheet
-    product_df = pd.read_excel(excel_file, sheet_name='Product')
-    # Insert Product data into the Product table
-    with app.app_context():
-        if not Product.query.first():
-            for index, row in product_df.iterrows():
-                product = Product(
-                    name=row['name'],
-                    price=row['price'],
-                    image=row['image']
+    with app.app_context():  # Ensure Flask app context is active
+
+                # Read Milestones data from the milestones sheet
+        memory_df = pd.read_excel(excel_file, sheet_name='Memory')
+
+        # Convert the 'date' column to string in YYYY-MM-DD format
+        memory_df['date'] = memory_df['date'].dt.strftime('%Y-%m-%d')
+
+        # Insert Milestones data into the Milestones table
+        for _, row in memory_df.iterrows():
+            # Check if the milestone already exists
+            existing = Memory.query.filter_by(
+                date=row['date'], 
+                artist=row['artist'], 
+                title=row['title']
+            ).first()
+            if not existing:
+                memory = Memory(
+                    date=row['date'],
+                    artist=row['artist'],
+                    title=row['title'],
+                    image=row['image'],
+                    description=row['description']
                 )
-                db.session.add(product)
-            db.session.commit()
-            print("Products added from Excel!")
+                db.session.add(memory)
+        db.session.commit()
+        print("Memories updated from Excel!")
+
+        # Read Milestones data from the milestones sheet
+        milestone_df = pd.read_excel(excel_file, sheet_name='Milestone')
+
+        # Convert the 'date' column to string in YYYY-MM-DD format
+        milestone_df['date'] = milestone_df['date'].dt.strftime('%Y-%m-%d')
+
+        # Insert Milestones data into the Milestones table
+        for _, row in milestone_df.iterrows():
+            # Check if the milestone already exists
+            existing = Milestone.query.filter_by(
+                date=row['date'], 
+                artist=row['artist'], 
+                title=row['title']
+            ).first()
+            if not existing:
+                milestone = Milestone(
+                    date=row['date'],
+                    artist=row['artist'],
+                    title=row['title'],
+                    image=row['image'],
+                    description=row['description']
+                )
+                db.session.add(milestone)
+        db.session.commit()
+        print("Milestones updated from Excel!")
 
         # Read Discography data from the second sheet
         discography_df = pd.read_excel(excel_file, sheet_name='Discography')
-        # Insert Discography data into the Discography table
-        if not Discography.query.first():
-            for index, row in discography_df.iterrows():
-                # Ensure duration is stored as a string (e.g., "3:21")
+        for _, row in discography_df.iterrows():
+            # Check if the discography entry already exists
+            existing = Discography.query.filter_by(
+                artist=row['artist'],
+                album_name=row['album_name'],
+                song_name=row['song_name']
+            ).first()
+            if not existing:
                 duration_str = str(row['duration'])  # Converts time object or any other format to string
                 discography = Discography(
                     artist=row['artist'],
                     album_name=row['album_name'],
                     song_name=row['song_name'],
                     release_date=row['release_date'],  # Ensure YYYY-MM-DD format
-                    duration=duration_str  # Store as a string
+                    duration=duration_str
                 )
                 db.session.add(discography)
-            db.session.commit()
-            print("Discography added from Excel!")
+        db.session.commit()
+        print("Discography updated from Excel!")
 
-                    # Read MusicVideos data from the third sheet
+        # Read MusicVideos data from the third sheet
         music_video_df = pd.read_excel(excel_file, sheet_name='MusicVideo')
-        if not MusicVideos.query.first():
-            for _, row in music_video_df.iterrows():
-                video = MusicVideos(
+        for _, row in music_video_df.iterrows():
+            # Check if the video already exists
+            existing = MusicVideo.query.filter_by(
+                artist=row['artist'],
+                video_name=row['video_name'],
+                youtube_url=row['youtube_url']
+            ).first()
+            if not existing:
+                video = MusicVideo(
                     artist=row['artist'],
                     video_name=row['video_name'],
                     youtube_url=row['youtube_url']
                 )
                 db.session.add(video)
-            db.session.commit()
-            print("Music Videos added from Excel!")
+        db.session.commit()
+        print("Music Videos updated from Excel!")
+
+        # Read Product data from the first sheet
+        product_df = pd.read_excel(excel_file, sheet_name='Product')
+        for _, row in product_df.iterrows():
+            # Check if the product already exists
+            existing = Product.query.filter_by(
+                name=row['name'], 
+                price=row['price'], 
+                image=row['image']
+            ).first()
+            if not existing:
+                product = Product(
+                    name=row['name'],
+                    price=row['price'],
+                    image=row['image']
+                )
+                db.session.add(product)
+        db.session.commit()
+        print("Products updated from Excel!")
 
 # Run the function to insert the data
 insert_data_from_excel()

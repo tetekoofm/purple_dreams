@@ -3,18 +3,35 @@ from datetime import datetime
 # Initialize the SQLAlchemy object
 db = SQLAlchemy()
 
-# Define the Product model
-class Product(db.Model):
+class Memory(db.Model):
+    __tablename__ = 'memory'
+
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    price = db.Column(db.Float, nullable=False)
-    image = db.Column(db.String(200), nullable=False)
+    date = db.Column(db.String(50), nullable=False)
+    artist = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    image = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=False)
 
     def __repr__(self):
-        return f'<Product {self.name}>'
+        return f'<Memory {self.title}>'
+    
+class Milestone(db.Model):
+    __tablename__ = 'milestone'
 
-# Define the Discography model
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String(50), nullable=False)
+    artist = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    image = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+
+    def __repr__(self):
+        return f'<Milestone {self.title}>'
+    
 class Discography(db.Model):
+    __tablename__ = 'discography'
+
     id = db.Column(db.Integer, primary_key=True)
     artist = db.Column(db.String(100), nullable=False)
     album_name = db.Column(db.String(200), nullable=False)
@@ -25,7 +42,9 @@ class Discography(db.Model):
     def __repr__(self):
         return f'<Discography {self.song_name}>'
 
-class MusicVideos(db.Model):
+class MusicVideo(db.Model):
+    __tablename__ = 'musicvideo'
+
     id = db.Column(db.Integer, primary_key=True)
     artist = db.Column(db.String(100), nullable=False)
     video_name = db.Column(db.String(255), nullable=False)
@@ -33,8 +52,19 @@ class MusicVideos(db.Model):
 
     def __repr__(self):
         return f'<MusicVideo {self.name}>'
+
+class Product(db.Model):
+    __tablename__ = 'product'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    image = db.Column(db.String(200), nullable=False)
+
+    def __repr__(self):
+        return f'<Product {self.name}>'
     
 class Order(db.Model):
+    __tablename__ = 'order'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
