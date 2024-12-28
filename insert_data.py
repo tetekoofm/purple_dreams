@@ -1,5 +1,5 @@
 import pandas as pd
-from models import db, Memory, Milestone, Product, Discography, MusicVideo
+from models import db, Upcoming, Memory, Milestone, Product, Discography, MusicVideo
 from app import app
 
 def insert_data_from_excel():
@@ -8,15 +8,42 @@ def insert_data_from_excel():
 
     with app.app_context():  # Ensure Flask app context is active
 
-                # Read Milestones data from the milestones sheet
+        # Read upcoming data from the upcoming sheet
+        upcoming_df = pd.read_excel(excel_file, sheet_name='Upcoming')
+
+        # Convert the 'date' column to string in YYYY-MM-DD format
+        upcoming_df['date'] = upcoming_df['date'].dt.strftime('%Y-%m-%d')
+
+        # Insert upcoming data into the upcoming table
+        for _, row in upcoming_df.iterrows():
+            # Check if the memory already exists
+            existing = Upcoming.query.filter_by(
+                date=row['date'], 
+                artist=row['artist'], 
+                title=row['title']
+            ).first()
+            if not existing:
+                upcoming = Upcoming(
+                    date=row['date'],
+                    artist=row['artist'],
+                    title=row['title'],
+                    image=row['image'],
+                    description=row['description']
+                )
+                db.session.add(upcoming)
+        db.session.commit()
+        print("Upcoming Events updated from Excel!")
+
+
+        # Read memory data from the memory sheet
         memory_df = pd.read_excel(excel_file, sheet_name='Memory')
 
         # Convert the 'date' column to string in YYYY-MM-DD format
         memory_df['date'] = memory_df['date'].dt.strftime('%Y-%m-%d')
 
-        # Insert Milestones data into the Milestones table
+        # Insert memory data into the memory table
         for _, row in memory_df.iterrows():
-            # Check if the milestone already exists
+            # Check if the memory already exists
             existing = Memory.query.filter_by(
                 date=row['date'], 
                 artist=row['artist'], 

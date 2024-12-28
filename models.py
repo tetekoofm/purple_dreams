@@ -3,6 +3,15 @@ from datetime import datetime
 # Initialize the SQLAlchemy object
 db = SQLAlchemy()
 
+class Upcoming(db.Model):
+    __tablename__ = 'upcoming'
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String(20), nullable=False)
+    artist = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    image = db.Column(db.String(300), nullable=True)
+    description = db.Column(db.Text, nullable=True)
+
 class Memory(db.Model):
     __tablename__ = 'memory'
 
